@@ -63,19 +63,7 @@ if(strpos($url, $word) !== false){
  }
 
 
-// // Validate e-mail
-// if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-//   echo("$email is a valid email address");
-// } 
-// else{
-//     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-//     if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-//         echo($email);}
-//         else{
-//            echo ("$email is a not valid email address");
-//         }
-//       } 
-//  }
+
 
 ?> 
 

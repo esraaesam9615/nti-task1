@@ -28,27 +28,13 @@
                 <input  class="form-control" name="email"  id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
             </div>
 
-            <div class="form-group">
-                <label for="exampleInputPassword">New Password</label>
-                <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
-            </div>
+        
 
             <div class="form-group">
                 <label for="exampleInputURL">Linked IN</label>
                 <input  class="form-control"  name="url"  id="url" placeholder="linked in">
             </div>
-            <div class="form-group">
-                <label for="exampleInputAddress">Address</label>
-                <input type="text" class="form-control"   name="address"  id="exampleInputAddress" aria-describedby="" placeholder="Enter Address">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleInputGender">Gender</label>
-                <input type="text" class="form-control"   name="gender"  id="exampleInputGender" aria-describedby="" placeholder="Enter Gender">
-            </div>
-
-            <label for="exampleInputCV">CV</label>
-            <input type="file" name="file" id="file">
+            
             <br>
 
             <button type="submit" class="btn btn-primary">Submit</button>
