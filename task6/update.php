@@ -18,11 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $title    = Clean($_POST['title']);
     $content= Clean($_POST['content']);
     $image=$_FILES['image']['name'];
+    $old_img =$_POST['oldimg'];
+
     
 
 
  
     $errors = [];
+
     if (empty($title)) {
         $errors['title'] = "Field Required";
     }
@@ -53,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
             $errors['image'] = "File Type Not Allowed";
         }
-    }
+       
 
 
     if (count($errors) > 0) {
@@ -67,8 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     } else {
 
         // DB cODE . . . 
+        $tmp_image = $_FILES['image']['tmp_name']; 
+        $img_content = addslashes(file_get_contents($tmp_image)); 
 
-        $sql = "update users set title= '$title', content= '$content' where id = $id";
+        $sql = "update users set title= '$title', content= '$content'  content= ' $img_content'  where id = $id";
 
         $op =  mysqli_query($con, $sql);
 
@@ -110,13 +115,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         <div class="form-group">
                 <label for="exampleInputTitle">Title</label>
-                <input type="text" class="form-control" required id="exampleInputTitle" aria-describedby="" name="title" placeholder="EnterTitle">
+                <input type="text" class="form-control" required id="exampleInputTitle" aria-describedby="" name="title" placeholder="EnterTitle" value = "<?php echo $data['title'];?>">
             </div>
 
 
             <div class="form-group">
                 <label for="exampleInputContent">Content</label>
-                <input type="text" class="form-control" required id="exampleInputContent" aria-describedby="emailHelp" name="content" placeholder="Enter Content">
+                <input type="text" class="form-control" required id="exampleInputContent" aria-describedby="emailHelp" name="content" placeholder="Enter Content" value = "<?php echo $data['content'];?>">
             </div>
 
         
@@ -124,9 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <div class="form-group">
                 <label for="exampleInputPassword">Image</label>
                 <input type="file" name="image">
+                <input type="hidden" name="oldimg" value = "<?php echo $data['image'];?>">
 
-
-            <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+           
         </form>
     </div>
 

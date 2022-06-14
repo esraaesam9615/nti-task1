@@ -83,14 +83,16 @@
                 <td>'.$id.'</td>
                 <td>'.$title.'</td>
                 <td>'.$content.'</td>
+                
              <td><img src="./uploads/' . $image . '" alt=""  height="60px" width="60px" /></td>
                 
                 <td>
                     <a  href="delete.php?id=' . $raw['id'] . '">Delete</a>
-                    <a  href="delete.php?id=' . $raw['id'] . '"  >Edit</a>
+                    <a  href="update.php?id=' . $raw['id'] . '"  >Edit</a>
                     
                 </td>
             </tr>';
+      
 
   } ?>
 

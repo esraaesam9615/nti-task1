@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     $title    = Clean($_POST['title']);
     $content= Clean($_POST['content']);
-    $image=$_FILES['image']['name'];
+    // $image=$_FILES['image']['name'];
     
 
 
@@ -61,25 +61,38 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     } else {
 
-      
-
-
-        $sql = "insert into contents (content,title,image) values ('$content','$title','$image')";
+        $tmp_image = $_FILES['image']['tmp_name']; 
+        $img_content = addslashes(file_get_contents($tmp_image)); 
+        $sql = "insert into contents (content,title,image) values ('$content','$title',' $img_content')";
 
         $op =  mysqli_query($con, $sql);
 
         if ($op) {
-            $finalName = uniqid() . time() . '.' . $extension;
-            $disPath = 'uploads/' . $finalName;
-            # Get Temp Path . . .
-            $tempName  = $_FILES['image']['tmp_name'];
-            move_uploaded_file($tempName, $disPath);
             echo "Success ";
         } else {
             echo "Failed , " . mysqli_error($con);
         }
+        // $finalName = uniqid() . time() . '.' . $extension;
+        // $image = 'uploads/' . $finalName;
+        // # Get Temp Path . . .
+        // $tempName  = $_FILES['image']['tmp_name'];
+        // move_uploaded_file($tempName, $image);
+        // if (move_uploaded_file($tempName, $image)) {
+
+        //     $sql = "insert into contents (content,title,image) values ('$content','$title',' $image')";
+
+        //     $op =  mysqli_query($con, $sql);
+    
+        //     if ($op) {
+        //         echo "Success ";
+        //     } else {
+        //         echo "Failed , " . mysqli_error($con);
+        //     }
+
+         
+
+        } 
     }
-}
 
 ?>
 

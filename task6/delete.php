@@ -8,7 +8,7 @@ require 'dbConnection.php';
 
  if($op){
     $message =  "Record Deleted";
-    unlink('uploads/'.trim($data[4]));
+    
  }else{
     $message =  'Error Try Again' . mysqli_error($con);
  }
