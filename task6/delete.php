@@ -3,12 +3,22 @@ require 'dbConnection.php';
 
  $id = $_GET['id'];
 
- $sql = "delete from contents where id = $id"; 
+ # Fetch User Data . . . 
+   $sql = "select image from user where id = $id";
+   $resultObj = mysqli_query($con, $sql);
+   $userImage = mysqli_fetch_assoc($resultObj); 
+
+# Remove User . . . 
+ $sql = "delete from user where id = $id"; 
  $op = mysqli_query($con, $sql);
 
  if($op){
-    $message =  "Record Deleted";
     
+   # Remove Image 
+   unlink('uploads/' . $userImage['image']);
+
+
+    $message =  "Record Deleted";
  }else{
     $message =  'Error Try Again' . mysqli_error($con);
  }
@@ -18,7 +28,3 @@ require 'dbConnection.php';
     $_SESSION['message'] = $message;
 
     header("Location: index.php");
-
-
-    
-?>

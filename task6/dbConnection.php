@@ -2,7 +2,7 @@
 session_start();
 
 $server   = "localhost";
-$database = "blog";
+$database = "users";
 $username = "root";
 $password = "";
 
@@ -18,3 +18,7 @@ try {
   echo $e->getMessage();
 }
 
+if(!isset($_SESSION['userData'])) {
+    header("location: index.php");
+    exit();
+}

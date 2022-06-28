@@ -1,9 +1,9 @@
 <?php 
   require 'dbConnection.php';
 
- $sql = "select * from contents";
+ $sql = "select id,name,email,image from user";
 
- $op = mysqli_query($con, $sql);
+ $resultObj = mysqli_query($con, $sql);
 
 ?>
 
@@ -11,7 +11,7 @@
 <html>
 
 <head>
-    <title>Blog</title>
+    <title>PDO - Read Records - PHP CRUD Tutorial</title>
 
     <!-- Latest compiled and minified Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
@@ -44,7 +44,7 @@
 
 
         <div class="page-header">
-            <h1>Blog</h1>
+            <h1>Read Users </h1>
             <br>
 
          <?php 
@@ -65,36 +65,28 @@
             <!-- creating our table heading -->
             <tr>
                 <th>ID</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>image</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Image</th>
                 <th>action</th>
             </tr>
 
      <?php 
-         while($raw = mysqli_fetch_assoc($op)){
-            
-            $id=$raw ['id'];
-            $title=$raw ['title'];
-            $content=$raw ['content'];
-            $image=$raw ['image'];
+         while($raw = mysqli_fetch_assoc($resultObj)){
            
-          echo'  <tr>
-                <td>'.$id.'</td>
-                <td>'.$title.'</td>
-                <td>'.$content.'</td>
-                
-             <td><img src="./uploads/' . $image . '" alt=""  height="60px" width="60px" /></td>
-                
+     ?>
+            <tr>
+                <td><?php  echo $raw['id'];  ?></td>
+                <td><?php  echo $raw['name'];  ?></td>
+                <td><?php  echo $raw['email'];  ?></td>
+                <td><img src="./uploads/<?php echo $raw['image'];?>" width="80px"  height="80px"> </td>
                 <td>
-                    <a  href="delete.php?id=' . $raw['id'] . '">Delete</a>
-                    <a  href="update.php?id=' . $raw['id'] . '"  >Edit</a>
-                    
+                    <a href='delete.php?id=<?php  echo $raw['id'];  ?>' class='btn btn-danger m-r-1em'>Delete</a>
+                    <a href='update.php?id=<?php  echo $raw['id'];  ?>' class='btn btn-primary m-r-1em'>Edit</a>
                 </td>
-            </tr>';
-      
+            </tr>
 
-  } ?>
+    <?php } ?>
 
 
             <!-- end table -->

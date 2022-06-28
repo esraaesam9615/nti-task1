@@ -13,7 +13,7 @@ function Clean($input)
 # Server Side Code . . . 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    $name     = Clean($_POST['name']);
+
     $password = Clean($_POST['password']);
     $email    = Clean($_POST['email']);
 
@@ -21,10 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     # Validate ...... 
     $errors = [];
 
-    # validate name .... 
-    if (empty($name)) {
-        $errors['name'] = "Field Required";
-    }
 
 
     # validate email 
@@ -43,62 +39,36 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 
 
-    # Validate Image . . . 
-    if (empty($_FILES['image']['name'])) {
-        $errors['image'] = "Field Required";
-    } else {
-
-        # Validate Extension . . . 
-        $imageType = $_FILES['image']['type'];
-        $extensionArray = explode('/', $imageType);
-        $extension =  strtolower(end($extensionArray));
-
-        $allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];    // PNG 
-
-        if (!in_array($extension, $allowedExtensions)) {
-
-            $errors['image'] = "File Type Not Allowed";
-        }
-    }
-
-
 
     # Check ...... 
     if (count($errors) > 0) {
         // print errors .... 
-
         foreach ($errors as $key => $value) {
             # code...
-
             echo '* ' . $key . ' : ' . $value . '<br>';
         }
     } else {
 
-        // DB cODE . . . 
+        // Login  cODE . . . 
 
+        $password = md5($password);
 
+        $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
+        $op = mysqli_query($con, $sql);
 
-        # Upload Image . . .
-        $finalName = uniqid() . time() . '.' . $extension;
-        $disPath = 'uploads/' . $finalName;
-        # Get Temp Path . . .
-        $tempName  = $_FILES['image']['tmp_name'];
+        if (mysqli_num_rows($op) == 1) {
+            // login success ....
+            
+            
 
-        if (move_uploaded_file($tempName, $disPath)) {
+            $row = mysqli_fetch_assoc($op);
 
-            $password = md5($password);
-            //   sha1()
-            $sql = "insert into user (name,email,password,image) values ('$name','$email','$password','$finalName')";
+            # Set Session . . . 
+            $_SESSION['userData'] = $row;
 
-            $op =  mysqli_query($con, $sql);
-
-            if ($op) {
-                echo "Success , Your Account Created";
-            } else {
-                echo "Failed , " . mysqli_error($con);
-            }
+            header("location: index.php");
         } else {
-            echo 'Error In Uploading Image , Try Again ';
+            echo '* Invalid Email or Password';
         }
     }
 }
@@ -110,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <html lang="en">
 
 <head>
-    <title>Register</title>
+    <title>SignIn</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -121,15 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <body>
 
     <div class="container">
-        <h2>Register</h2>
+        <h2>Login</h2>
 
         <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" enctype="multipart/form-data">
-
-            <div class="form-group">
-                <label for="exampleInputName">Name</label>
-                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="name" placeholder="Enter Name">
-            </div>
-
 
             <div class="form-group">
                 <label for="exampleInputEmail">Email address</label>
@@ -137,17 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             </div>
 
             <div class="form-group">
-                <label for="exampleInputPassword">New Password</label>
+                <label for="exampleInputPassword">Password</label>
                 <input type="password" class="form-control" required id="exampleInputPassword1" name="password" placeholder="Password">
             </div>
 
 
-            <div class="form-group">
-                <label for="exampleInputPassword">Image</label>
-                <input type="file" name="image">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Go!</button>
         </form>
     </div>
 
@@ -155,3 +114,4 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 </body>
 
 </html>
+

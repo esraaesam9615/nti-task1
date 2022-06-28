@@ -1,49 +1,56 @@
 <?php
 
 require 'dbConnection.php';
+
+
+##################################################################################################################
  
 $id = $_GET['id'];
-$sql = "select * from contents where id = $id";
+$sql = "select id,name,email,image from user where id = $id";
 $resultObj = mysqli_query($con, $sql);
 $data = mysqli_fetch_assoc($resultObj);
 
+##################################################################################################################
 
+
+
+
+
+
+
+# Clean Function to sanitize the data
 function Clean($input)
 {
     return stripslashes(strip_tags(trim($input)));
 }
 
 
+
+# Server Side Code . . . 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $title    = Clean($_POST['title']);
-    $content= Clean($_POST['content']);
-    $image=$_FILES['image']['name'];
-    $old_img =$_POST['oldimg'];
 
-    
+    $name     = Clean($_POST['name']);
+    $email    = Clean($_POST['email']);
 
 
- 
+    # Validate ...... 
     $errors = [];
 
-    if (empty($title)) {
-        $errors['title'] = "Field Required";
-    }
-    elseif(!is_string($title)){
-        $errors['title'] = "error must enter string";
-
+    # validate name .... 
+    if (empty($name)) {
+        $errors['name'] = "Field Required";
     }
 
-  
-    if (empty($content)) {    
-        $errors['content'] = 'Field is Required';
-    }elseif (!strlen($content) > 50) {
-        $errors['content'] = 'content must be more than 50';
-    }
 
-    if (empty($_FILES['image']['name'])) {
-        $errors['image'] = "Field Required";
-    } else {
+    # validate email 
+    if (empty($email)) {
+        $errors['email'] = "Field Required";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['Email'] = "Invalid Email";
+    }
+   
+   # Validate Image  . . . 
+    if (!empty($_FILES['image']['name'])) {
 
         # Validate Extension . . . 
         $imageType = $_FILES['image']['type'];
@@ -56,24 +63,42 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
             $errors['image'] = "File Type Not Allowed";
         }
-       
+    }  
 
 
+
+
+    # Check ...... 
     if (count($errors) > 0) {
-      
+        // print errors .... 
 
         foreach ($errors as $key => $value) {
-          
+            # code...
 
             echo '* ' . $key . ' : ' . $value . '<br>';
         }
     } else {
 
         // DB cODE . . . 
-        $tmp_image = $_FILES['image']['tmp_name']; 
-        $img_content = addslashes(file_get_contents($tmp_image)); 
 
-        $sql = "update users set title= '$title', content= '$content'  content= ' $img_content'  where id = $id";
+        if (!empty($_FILES['image']['name'])) {
+
+          # Upload Image . . .
+        $finalName = uniqid() . time() . '.' . $extension;
+        $disPath = 'uploads/' . $finalName;
+        # Get Temp Path . . .
+        $tempName  = $_FILES['image']['tmp_name'];
+
+        if (move_uploaded_file($tempName, $disPath)) {
+
+            unlink('uploads/' . $data['image']);
+        }
+
+        }else{
+            $finalName = $data['image'];
+        }
+
+        $sql = "update user set name = '$name', email = '$email' , image = '$finalName'  where id = $id";
 
         $op =  mysqli_query($con, $sql);
 
@@ -113,26 +138,28 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']).'?id='.$data['id']; ?>" method="post" enctype="multipart/form-data">
 
-        <div class="form-group">
-                <label for="exampleInputTitle">Title</label>
-                <input type="text" class="form-control" required id="exampleInputTitle" aria-describedby="" name="title" placeholder="EnterTitle" value = "<?php echo $data['title'];?>">
+            <div class="form-group">
+                <label for="exampleInputName">Name</label>
+                <input type="text" class="form-control" required id="exampleInputName" aria-describedby="" name="name" placeholder="Enter Name"  value = "<?php echo $data['name'];?>">
             </div>
 
 
             <div class="form-group">
-                <label for="exampleInputContent">Content</label>
-                <input type="text" class="form-control" required id="exampleInputContent" aria-describedby="emailHelp" name="content" placeholder="Enter Content" value = "<?php echo $data['content'];?>">
+                <label for="exampleInputEmail">Email address</label>
+                <input type="email" class="form-control" required id="exampleInputEmail1" aria-describedby="emailHelp" name="email" placeholder="Enter email" value = "<?php echo $data['email'];?>">
             </div>
 
-        
 
             <div class="form-group">
                 <label for="exampleInputPassword">Image</label>
                 <input type="file" name="image">
-                <input type="hidden" name="oldimg" value = "<?php echo $data['image'];?>">
+            </div>
 
-                <button type="submit" class="btn btn-primary">Save</button>
-           
+            <p>
+                <img src="./uploads/<?php echo $data['image'];?>"   height="150px"   width="150px"  alt="">
+            </p>
+
+            <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
 
